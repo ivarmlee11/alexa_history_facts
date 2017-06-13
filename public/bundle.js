@@ -136,8 +136,6 @@ app.post('/test', function (req, res) {
 });
 
 app.post('/thisdayinhistory', requestVerifier, function (req, res) {
-  console.log('request made it to post route');
-  console.log(req.body.request);
   if (req.body.request.type === 'LaunchRequest') {
     res.json({
       "version": "1.0",
@@ -158,11 +156,7 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
       var alexaSpeachResponse = "<speak> oh my god! </speak>";
 
       (0, _request2.default)('http://history.muffinlabs.com/date', function (error, response, body) {
-        console.log(response);
         console.log(body);
-        if (error) {
-          res.send(error);
-        }
         var eventsArray = body.data.Events;
         var randomEvent = Math.floor(Math.random() * (eventsArray.length - 1));
         alexaSpeachResponse = eventsArray[randomEvent];
@@ -176,6 +170,9 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
             }
           }
         });
+        if (error) {
+          res.send(error);
+        }
       });
     }
   } else {

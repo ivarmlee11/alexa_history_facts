@@ -15,8 +15,6 @@ app.post('/test', (req, res) => {
 });
 
 app.post('/thisdayinhistory', requestVerifier, (req, res) => {
-  console.log('request made it to post route');
-  console.log(req.body.request);
   if (req.body.request.type === 'LaunchRequest') {
     res.json({
       "version": "1.0",
@@ -37,13 +35,9 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
       let alexaSpeachResponse = "<speak> oh my god! </speak>"
 
       request('http://history.muffinlabs.com/date', (error, response, body) => {
-        console.log(response);
         console.log(body);
-        if (error) {
-          res.send(error)
-        }
-        let eventsArray = body.data.Events
-        let randomEvent = Math.floor(Math.random() * (eventsArray.length-1))
+        let eventsArray = body.data.Events;
+        let randomEvent = Math.floor(Math.random() * (eventsArray.length-1));
         alexaSpeachResponse = eventsArray[randomEvent];
         res.json({
           "version": "1.0",
@@ -55,6 +49,9 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
             }
           }
         });
+        if (error) {
+          res.send(error)
+        }
 
       });
       
