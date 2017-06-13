@@ -38,9 +38,8 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
         let eventsArray = data.data.Events;
         let randomEvent = Math.floor(Math.random() * (eventsArray.length-1));
         let choice = eventsArray[randomEvent];
-        let alexaSpeachResponse = `<speak> ${choice} </speak>`;
-        console.log(eventsArray);
-        console.log(alexaSpeachResponse);
+        let alexaSpeachResponse = `<speak> In ${choice.year}, ${choice.text} </speak>`; 
+
         res.json({
           "version": "1.0",
           "response": {
