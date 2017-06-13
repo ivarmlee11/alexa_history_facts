@@ -36,9 +36,10 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
       request('http://history.muffinlabs.com/date', (error, response, body) => {
         let data = JSON.parse(body);
         let eventsArray = data.data.Events;
+        let date = data.date;
         let randomEvent = Math.floor(Math.random() * (eventsArray.length-1));
         let choice = eventsArray[randomEvent];
-        let alexaSpeachResponse = `<speak> In ${choice.year}, ${choice.text} </speak>`; 
+        let alexaSpeachResponse = `<speak> On ${date} in ${choice.year}, ${choice.text} </speak>`; 
 
         res.json({
           "version": "1.0",

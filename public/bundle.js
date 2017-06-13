@@ -157,9 +157,10 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
       (0, _request2.default)('http://history.muffinlabs.com/date', function (error, response, body) {
         var data = JSON.parse(body);
         var eventsArray = data.data.Events;
+        var date = data.date;
         var randomEvent = Math.floor(Math.random() * (eventsArray.length - 1));
         var choice = eventsArray[randomEvent];
-        var alexaSpeachResponse = '<speak> In ' + choice.year + ', ' + choice.text + ' </speak>';
+        var alexaSpeachResponse = '<speak> On ' + date + ' in ' + choice.year + ', ' + choice.text + ' </speak>';
 
         res.json({
           "version": "1.0",
