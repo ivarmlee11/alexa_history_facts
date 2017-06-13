@@ -171,7 +171,6 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
 function requestVerifier(req, res, next) {
   (0, _alexaVerifier2.default)(req.headers.signaturecertchainurl, req.headers.signature, req.rawBody, function verificationCallback(err) {
     console.log('request made it to middleware');
-    console.log(req);
     if (err) {
       res.status(401).json({ message: 'Verification Failure', error: err });
     } else {

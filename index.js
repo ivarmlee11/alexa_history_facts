@@ -63,7 +63,6 @@ function requestVerifier(req, res, next) {
     req.rawBody,
     function verificationCallback(err) {
       console.log('request made it to middleware');
-      console.log(req);
       if (err) {
           res.status(401).json({ message: 'Verification Failure', error: err });
       } else {
