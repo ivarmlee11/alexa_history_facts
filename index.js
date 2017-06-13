@@ -32,13 +32,15 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
   } else if (req.body.request.type === 'IntentRequest' && req.body.request.intent.name === 'ThisDayInHistory') {
 
     if(res.statusCode === 200 ) {
-      let alexaSpeachResponse = "<speak> oh my god! </speak>"
 
       request('http://history.muffinlabs.com/date', (error, response, body) => {
         let data = JSON.parse(body);
         let eventsArray = data.data.Events;
         let randomEvent = Math.floor(Math.random() * (eventsArray.length-1));
-        alexaSpeachResponse = eventsArray[randomEvent];
+        let choice = eventsArray[randomEvent];
+        let alexaSpeachResponse = `<speak> ${choice} </speak>`;
+        console.log(eventsArray);
+        console.log(alexaSpeachResponse);
         res.json({
           "version": "1.0",
           "response": {
@@ -73,8 +75,6 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
 }); 
 
 function requestVerifier(req, res, next) {
-  console.log(req.headers);
-  console.log(req.body);
   alexaVerifier(
     req.headers.signaturecertchainurl,
     req.headers.signature,
