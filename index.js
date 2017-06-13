@@ -40,7 +40,7 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
         if (error) {
           res.send(error)
         }
-        let eventsArray = body.data.events
+        let eventsArray = body.data.Events
         let randomEvent = Math.floor(Math.random() * (eventsArray.length-1))
         alexaSpeachResponse = eventsArray[randomEvent];
         res.json({

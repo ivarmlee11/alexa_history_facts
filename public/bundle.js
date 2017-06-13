@@ -161,7 +161,7 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
         if (error) {
           res.send(error);
         }
-        var eventsArray = body.data.events;
+        var eventsArray = body.data.Events;
         var randomEvent = Math.floor(Math.random() * (eventsArray.length - 1));
         alexaSpeachResponse = eventsArray[randomEvent];
         res.json({
