@@ -6,15 +6,11 @@ import http from 'http';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(bodyParser.json({
-  verify: function getRawBody(req, res, buf) {
-    req.rawBody = buf.toString();
-  }
-}));
+app.use(bodyParser.json());
 
 app.post('/test', (req, res) => {
   console.log('test route');
-  res.send('this works');
+  res.json('this works');
 });
 
 app.post('/thisdayinhistory', requestVerifier, (req, res) => {
