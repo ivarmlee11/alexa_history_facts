@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -92,6 +92,12 @@ module.exports = require("http");
 
 /***/ }),
 /* 4 */
+/***/ (function(module, exports) {
+
+module.exports = require("request");
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -112,6 +118,10 @@ var _alexaVerifier2 = _interopRequireDefault(_alexaVerifier);
 var _http = __webpack_require__(3);
 
 var _http2 = _interopRequireDefault(_http);
+
+var _request = __webpack_require__(4);
+
+var _request2 = _interopRequireDefault(_request);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -141,26 +151,33 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
     });
   } else if (req.body.request.type === 'SessionEndedRequest') {
     // no response sent for this request.type
-    console.log('Alexa session ended', req.body.request.reason);
+    console.log('Alexa session ended ' + req.body.request.reason);
   } else if (req.body.request.type === 'IntentRequest' && req.body.request.intent.name === 'ThisDayInHistory') {
 
-    _http2.default.get('http://history.muffinlabs.com/date').then(function (data) {
-      var res = JSON.stringify(data);
-      console.log(res);
-
+    if (res.statusCode === 200) {
       var alexaSpeachResponse = "<speak> oh my god! </speak>";
-      res.json({
-        "version": "1.0",
-        "response": {
-          "shouldEndSession": true,
-          "outputSpeech": {
-            "type": "SSML",
-            "ssml": alexaSpeachResponse
-          }
+
+      (0, _request2.default)('http://history.muffinlabs.com/date', function (error, response, body) {
+        if (error) {
+          res.send(error);
         }
+        var eventsArray = body.data.events;
+        var randomEvent = Math.floor(Math.random() * (eventsArray.length - 1));
+        alexaSpeachResponse = eventsArray[randomEvent];
+        res.json({
+          "version": "1.0",
+          "response": {
+            "shouldEndSession": true,
+            "outputSpeech": {
+              "type": "SSML",
+              "ssml": alexaSpeachResponse
+            }
+          }
+        });
       });
-    });
+    }
   } else {
+
     res.json({
       "version": "1.0",
       "response": {
@@ -184,6 +201,7 @@ function requestVerifier(req, res, next) {
 }
 
 setInterval(function () {
+  console.log('KEEPING HEROKU AWAKE');
   _http2.default.get('http://alexathisdayinhistory.herokuapp.com');
 }, 400000); // every 4 minutes
 

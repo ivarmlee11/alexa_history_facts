@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import alexaVerifier from 'alexa-verifier';
 import http from 'http';
+import request from 'request';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -29,41 +30,48 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
     });
   } else if (req.body.request.type === 'SessionEndedRequest') {
     // no response sent for this request.type
-    console.log('Alexa session ended', req.body.request.reason);
+    console.log(`Alexa session ended ${req.body.request.reason}`);
   } else if (req.body.request.type === 'IntentRequest' && req.body.request.intent.name === 'ThisDayInHistory') {
 
-
-    http.get('http://history.muffinlabs.com/date').then((data) => {
-      let res = JSON.stringify(data);
-      console.log(res);
-
+    if(res.statusCode === 200 ) {
       let alexaSpeachResponse = "<speak> oh my god! </speak>"
-      res.json({
-        "version": "1.0",
-        "response": {
-          "shouldEndSession": true,
-          "outputSpeech": {
-            "type": "SSML",
-            "ssml": alexaSpeachResponse
-          }
-        }
-      });
 
-    })
+      request('http://history.muffinlabs.com/date', (error, response, body) => {
+        if (error) {
+          res.send(error)
+        }
+        let eventsArray = body.data.events
+        let randomEvent = Math.floor(Math.random() * (eventsArray.length-1))
+        alexaSpeachResponse = eventsArray[randomEvent];
+        res.json({
+          "version": "1.0",
+          "response": {
+            "shouldEndSession": true,
+            "outputSpeech": {
+              "type": "SSML",
+              "ssml": alexaSpeachResponse
+            }
+          }
+        });
+
+      });
+      
+    }
 
   } else {
+
     res.json({
-    "version": "1.0",
-    "response": {
-      "shouldEndSession": true,
-      "outputSpeech": {
-        "type": "SSML",
-        "ssml": "<speak> I am not sure what is going on. </speak>"
+      "version": "1.0",
+      "response": {
+        "shouldEndSession": true,
+        "outputSpeech": {
+          "type": "SSML",
+          "ssml": "<speak> I am not sure what is going on. </speak>"
+        }
       }
-    }
     });
   }
-});
+}); 
 
 function requestVerifier(req, res, next) {
   console.log(req.headers);
@@ -80,6 +88,7 @@ function requestVerifier(req, res, next) {
 }
 
 setInterval(() => {
+  console.log(`KEEPING HEROKU AWAKE`);
   http.get('http://alexathisdayinhistory.herokuapp.com');
 }, 400000); // every 4 minutes
 
