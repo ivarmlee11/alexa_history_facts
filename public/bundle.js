@@ -144,19 +144,23 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
     console.log('Alexa session ended', req.body.request.reason);
   } else if (req.body.request.type === 'IntentRequest' && req.body.request.intent.name === 'ThisDayInHistory') {
 
-    var alexaSpeachResponse = "<speak> Looks like a great day! </speak>";
-    res.json({
-      "version": "1.0",
-      "response": {
-        "shouldEndSession": true,
-        "outputSpeech": {
-          "type": "SSML",
-          "ssml": alexaSpeachResponse
+    _http2.default.get('http://history.muffinlabs.com/date').then(function (data) {
+      var res = JSON.stringify(data);
+      console.log(res);
+
+      var alexaSpeachResponse = "<speak> oh my god! </speak>";
+      res.json({
+        "version": "1.0",
+        "response": {
+          "shouldEndSession": true,
+          "outputSpeech": {
+            "type": "SSML",
+            "ssml": alexaSpeachResponse
+          }
         }
-      }
+      });
     });
   } else {
-    console.log('what\'s going on');
     res.json({
       "version": "1.0",
       "response": {
@@ -172,10 +176,9 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
 
 function requestVerifier(req, res, next) {
   console.log(req.headers);
-  console.log(req.rawBody);
-  (0, _alexaVerifier2.default)(req.headers.signaturecertchainurl, req.headers.signature, req.rawBody, function verificationCallback(err) {
-    console.log('request made it to middleware');
-
+  console.log(req.body);
+  (0, _alexaVerifier2.default)(req.headers.signaturecertchainurl, req.headers.signature, req.body, function verificationCallback(err) {
+    console.log(err);
     next();
   });
 }

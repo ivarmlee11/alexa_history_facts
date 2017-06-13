@@ -32,44 +32,49 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
     console.log('Alexa session ended', req.body.request.reason);
   } else if (req.body.request.type === 'IntentRequest' && req.body.request.intent.name === 'ThisDayInHistory') {
 
-    var alexaSpeachResponse = "<speak> Looks like a great day! </speak>"
-    res.json({
-      "version": "1.0",
-      "response": {
-        "shouldEndSession": true,
-        "outputSpeech": {
-          "type": "SSML",
-          "ssml": alexaSpeachResponse
+
+    http.get('http://history.muffinlabs.com/date').then((data) => {
+      let res = JSON.stringify(data);
+      console.log(res);
+
+      let alexaSpeachResponse = "<speak> oh my god! </speak>"
+      res.json({
+        "version": "1.0",
+        "response": {
+          "shouldEndSession": true,
+          "outputSpeech": {
+            "type": "SSML",
+            "ssml": alexaSpeachResponse
+          }
         }
-      }
-    });
+      });
+
+    })
+
   } else {
-    console.log('what\'s going on');
     res.json({
-      "version": "1.0",
-      "response": {
-        "shouldEndSession": true,
-        "outputSpeech": {
-          "type": "SSML",
-          "ssml": "<speak> I am not sure what is going on. </speak>"
-        }
+    "version": "1.0",
+    "response": {
+      "shouldEndSession": true,
+      "outputSpeech": {
+        "type": "SSML",
+        "ssml": "<speak> I am not sure what is going on. </speak>"
       }
+    }
     });
   }
 });
 
 function requestVerifier(req, res, next) {
   console.log(req.headers);
-  console.log(req.rawBody);
+  console.log(req.body);
   alexaVerifier(
     req.headers.signaturecertchainurl,
     req.headers.signature,
-    req.rawBody,
+    req.body,
     function verificationCallback(err) {
-      console.log('request made it to middleware');
-
-          next();
-      
+      console.log(err);
+      next();
     }
   );
 }
