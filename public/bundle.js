@@ -159,9 +159,8 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
         var eventsArray = data.data.Events;
         var randomEvent = Math.floor(Math.random() * (eventsArray.length - 1));
         var choice = eventsArray[randomEvent];
-        var alexaSpeachResponse = '<speak> ' + choice + ' </speak>';
-        console.log(eventsArray);
-        console.log(alexaSpeachResponse);
+        var alexaSpeachResponse = '<speak> In ' + choice.year + ', ' + choice.text + ' </speak>';
+
         res.json({
           "version": "1.0",
           "response": {
