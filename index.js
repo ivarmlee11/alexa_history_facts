@@ -14,6 +14,7 @@ app.use(bodyParser.json({
 
 app.post('/test', (req, res) => {
   console.log('test route');
+  res.send('this works');
 });
 
 app.post('/thisdayinhistory', requestVerifier, (req, res) => {
