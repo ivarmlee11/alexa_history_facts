@@ -35,8 +35,8 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
       let alexaSpeachResponse = "<speak> oh my god! </speak>"
 
       request('http://history.muffinlabs.com/date', (error, response, body) => {
-        console.log(body);
-        let eventsArray = body.data.Events;
+        let data = JSON.parse(body);
+        let eventsArray = data.data.Events;
         let randomEvent = Math.floor(Math.random() * (eventsArray.length-1));
         alexaSpeachResponse = eventsArray[randomEvent];
         res.json({
