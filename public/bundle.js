@@ -143,13 +143,15 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
     // no response sent for this request.type
     console.log('Alexa session ended', req.body.request.reason);
   } else if (req.body.request.type === 'IntentRequest' && req.body.request.intent.name === 'ThisDayInHistory') {
+
+    var alexaSpeachResponse = "<speak> Looks like a great day! </speak>";
     res.json({
       "version": "1.0",
       "response": {
         "shouldEndSession": true,
         "outputSpeech": {
           "type": "SSML",
-          "ssml": "<speak> Looks like a great day! </speak>"
+          "ssml": alexaSpeachResponse
         }
       }
     });
