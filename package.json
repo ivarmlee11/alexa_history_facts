@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node ./public/bundle.js",
     "build": "webpack && node ./public/bundle.js"
   },
   "keywords": [],
