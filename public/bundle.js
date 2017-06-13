@@ -127,7 +127,7 @@ app.post('/test', function (req, res) {
 
 app.post('/thisdayinhistory', requestVerifier, function (req, res) {
   console.log('request made it to post route');
-  console.log(req.body.request);
+  console.log(req.body);
   if (req.body.request.type === 'LaunchRequest') {
     res.json({
       "version": "1.0",
