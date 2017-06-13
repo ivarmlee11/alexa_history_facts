@@ -11,6 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 function requestVerifier(req, res, next) {
+  console.log('request made it to middleware');
   alexaVerifier(
     req.headers.signaturecertchainurl,
     req.headers.signature,
@@ -33,6 +34,7 @@ app.use(bodyParser.json({
 ));
 
 app.post('/thisdayinhistory', requestVerifier, (req, res) => {
+  console.log('request made it to post route');
   console.log(req.body);
   if (req.body.request.type === 'LaunchRequest') {
     res.json({
