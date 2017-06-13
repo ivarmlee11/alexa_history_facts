@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 function requestVerifier(req, res, next) {
   console.log('request made it to middleware');
+  console.log(req);
   alexaVerifier(
     req.headers.signaturecertchainurl,
     req.headers.signature,
