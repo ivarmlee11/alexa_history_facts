@@ -33,6 +33,7 @@ app.use(bodyParser.json({
 ));
 
 app.post('/thisdayinhistory', requestVerifier, (req, res) => {
+  console.log(req.body);
   if (req.body.request.type === 'LaunchRequest') {
     res.json({
       "version": "1.0",
