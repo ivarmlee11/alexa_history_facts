@@ -6,12 +6,7 @@ import http from 'http';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(bodyParser.json({
-    verify: function getRawBody(req, res, buf) {
-      req.rawBody = buf.toString();
-    }
-  }
-));
+app.use(bodyParser.json());
 
 app.post('/thisdayinhistory', requestVerifier, (req, res) => {
   console.log('request made it to post route');
