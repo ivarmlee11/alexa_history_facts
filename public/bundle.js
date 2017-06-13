@@ -156,8 +156,8 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
       var alexaSpeachResponse = "<speak> oh my god! </speak>";
 
       (0, _request2.default)('http://history.muffinlabs.com/date', function (error, response, body) {
-        console.log(body);
-        var eventsArray = body.data.Events;
+        var data = JSON.parse(body);
+        var eventsArray = data.data.Events;
         var randomEvent = Math.floor(Math.random() * (eventsArray.length - 1));
         alexaSpeachResponse = eventsArray[randomEvent];
         res.json({
