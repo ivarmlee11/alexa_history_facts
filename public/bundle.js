@@ -115,15 +115,63 @@ var _http2 = _interopRequireDefault(_http);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-setInterval(function () {
-  _http2.default.get('http://alexathisdayinhistory.herokuapp.com');
-}, 400000); // every 4 minutes
-
 var app = (0, _express2.default)();
 var PORT = process.env.PORT || 3000;
 
+app.use(_bodyParser2.default.json());
+
+app.post('/test', function (req, res) {
+  console.log('test route');
+  res.json('this works');
+});
+
+app.post('/thisdayinhistory', requestVerifier, function (req, res) {
+  console.log('request made it to post route');
+  console.log(req.body);
+  if (req.body.request.type === 'LaunchRequest') {
+    res.json({
+      "version": "1.0",
+      "response": {
+        "shouldEndSession": true,
+        "outputSpeech": {
+          "type": "SSML",
+          "ssml": "<speak> I'm digging into my historical data banks </speak>"
+        }
+      }
+    });
+  } else if (req.body.request.type === 'SessionEndedRequest') {
+    // no response sent for this request.type
+    console.log('Alexa session ended', req.body.request.reason);
+  } else if (req.body.request.type === 'IntentRequest' && req.body.request.intent.name === 'ThisDayInHistory') {
+    res.json({
+      "version": "1.0",
+      "response": {
+        "shouldEndSession": true,
+        "outputSpeech": {
+          "type": "SSML",
+          "ssml": "<speak> Looks like a great day! </speak>"
+        }
+      }
+    });
+  } else {
+    console.log('what\'s going on');
+    res.json({
+      "version": "1.0",
+      "response": {
+        "shouldEndSession": true,
+        "outputSpeech": {
+          "type": "SSML",
+          "ssml": "<speak> I am not sure what is going on. </speak>"
+        }
+      }
+    });
+  }
+});
+
 function requestVerifier(req, res, next) {
   (0, _alexaVerifier2.default)(req.headers.signaturecertchainurl, req.headers.signature, req.rawBody, function verificationCallback(err) {
+    console.log('request made it to middleware');
+    console.log(req);
     if (err) {
       res.status(401).json({ message: 'Verification Failure', error: err });
     } else {
@@ -132,26 +180,9 @@ function requestVerifier(req, res, next) {
   });
 }
 
-app.use(_bodyParser2.default.json({
-  verify: function getRawBody(req, res, buf) {
-    req.rawBody = buf.toString();
-  }
-}));
-
-app.post('/thisdayinhistory', requestVerifier, function (req, res) {
-  if (req.body.request.type === 'LaunchRequest') {
-    res.json({
-      "version": "1.0",
-      "response": {
-        "shouldEndSession": true,
-        "outputSpeech": {
-          "type": "SSML",
-          "ssml": "<speak> I'm digging into my historical data banks! </speak>"
-        }
-      }
-    });
-  }
-});
+setInterval(function () {
+  _http2.default.get('http://alexathisdayinhistory.herokuapp.com');
+}, 400000); // every 4 minutes
 
 app.listen(PORT, function () {
   console.log('listening on... ' + PORT);
