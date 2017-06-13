@@ -8,6 +8,10 @@ const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
+app.post('/test', (req, res) => {
+  console.log('test route');
+});
+
 app.post('/thisdayinhistory', requestVerifier, (req, res) => {
   console.log('request made it to post route');
   console.log(req.body);
