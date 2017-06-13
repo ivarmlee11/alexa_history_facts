@@ -6,7 +6,11 @@ import http from 'http';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+  verify: function getRawBody(req, res, buf) {
+    req.rawBody = buf.toString();
+  }
+}));
 
 app.post('/test', (req, res) => {
   console.log('test route');
@@ -36,23 +40,33 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
         "shouldEndSession": true,
         "outputSpeech": {
           "type": "SSML",
-          "ssml": "<speak>Looks like a great day!</speak>"
+          "ssml": "<speak> Looks like a great day! </speak>"
         }
       }
     });
   } else {
-    console.log('what\'s going on')
+    console.log('what\'s going on');
+    res.json({
+      "version": "1.0",
+      "response": {
+        "shouldEndSession": true,
+        "outputSpeech": {
+          "type": "SSML",
+          "ssml": "<speak> I am not sure what is going on. </speak>"
+        }
+      }
+    });
   }
 });
 
 function requestVerifier(req, res, next) {
-  console.log('request made it to middleware');
-  console.log(req);
   alexaVerifier(
     req.headers.signaturecertchainurl,
     req.headers.signature,
     req.rawBody,
     function verificationCallback(err) {
+      console.log('request made it to middleware');
+      console.log(req);
       if (err) {
           res.status(401).json({ message: 'Verification Failure', error: err });
       } else {
