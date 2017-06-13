@@ -37,6 +37,8 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
       let alexaSpeachResponse = "<speak> oh my god! </speak>"
 
       request('http://history.muffinlabs.com/date', (error, response, body) => {
+        console.log(response);
+        console.log(body);
         if (error) {
           res.send(error)
         }

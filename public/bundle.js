@@ -158,6 +158,8 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
       var alexaSpeachResponse = "<speak> oh my god! </speak>";
 
       (0, _request2.default)('http://history.muffinlabs.com/date', function (error, response, body) {
+        console.log(response);
+        console.log(body);
         if (error) {
           res.send(error);
         }
