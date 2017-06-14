@@ -14,7 +14,9 @@ app.use(bodyParser.json({
 }));
 
 app.post('/thisdayinhistory', requestVerifier, (req, res) => {
+
   if (req.body.request.type === 'LaunchRequest') {
+  
     res.json({
       "version": "1.0",
       "response": {
@@ -25,6 +27,7 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
         }
       }
     });
+  
   } else if (req.body.request.type === 'SessionEndedRequest') {
     // no response sent for this request.type
     console.log(`Alexa session ended ${req.body.request.reason}`);
@@ -50,9 +53,6 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
             }
           }
         });
-        if (error) {
-          res.send(error);
-        }
 
       });
       
@@ -70,10 +70,13 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
         }
       }
     });
+
   }
+
 }); 
 
 function requestVerifier(req, res, next) {
+
   alexaVerifier(
     req.headers.signaturecertchainurl,
     req.headers.signature,
@@ -86,6 +89,7 @@ function requestVerifier(req, res, next) {
       }
     }
   );
+  
 }
 
 setInterval(() => {

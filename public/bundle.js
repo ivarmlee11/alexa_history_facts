@@ -135,7 +135,9 @@ app.use(_bodyParser2.default.json({
 }));
 
 app.post('/thisdayinhistory', requestVerifier, function (req, res) {
+
   if (req.body.request.type === 'LaunchRequest') {
+
     res.json({
       "version": "1.0",
       "response": {
@@ -171,9 +173,6 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
             }
           }
         });
-        if (error) {
-          res.send(error);
-        }
       });
     }
   } else {
@@ -192,6 +191,7 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
 });
 
 function requestVerifier(req, res, next) {
+
   (0, _alexaVerifier2.default)(req.headers.signaturecertchainurl, req.headers.signature, req.rawBody, function (err) {
     if (err) {
       throw new Error();
