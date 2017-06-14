@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./public/bundle.js",
-    "build": "webpack && node ./public/bundle.js"
+    "build": "webpack",
+    "build_deploy": "webpack && git add . && git commit -m 'updated heroku' && git push heroku master"
   },
   "keywords": [],
   "author": "",

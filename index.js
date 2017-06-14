@@ -7,12 +7,11 @@ import request from 'request';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
-
-app.post('/test', (req, res) => {
-  console.log('test route');
-  res.json('this works');
-});
+app.use(bodyParser.json({
+  verify: function getRawBody(req, res, buf) {
+      req.rawBody = buf.toString();
+  }
+}));
 
 app.post('/thisdayinhistory', requestVerifier, (req, res) => {
   if (req.body.request.type === 'LaunchRequest') {
@@ -52,7 +51,7 @@ app.post('/thisdayinhistory', requestVerifier, (req, res) => {
           }
         });
         if (error) {
-          res.send(error)
+          res.send(error);
         }
 
       });
@@ -78,10 +77,13 @@ function requestVerifier(req, res, next) {
   alexaVerifier(
     req.headers.signaturecertchainurl,
     req.headers.signature,
-    req.body,
-    function verificationCallback(err) {
-      console.log(err);
-      next();
+    req.rawBody,
+    (err) => {
+      if (err) {
+        throw new Error;
+      } else {
+        next();
+      }
     }
   );
 }
@@ -89,7 +91,7 @@ function requestVerifier(req, res, next) {
 setInterval(() => {
   console.log(`KEEPING HEROKU AWAKE`);
   http.get('http://alexathisdayinhistory.herokuapp.com');
-}, 400000); // every 4 minutes
+}, 400000);
 
 app.listen(PORT, () => {
   console.log(`listening on... ${PORT}`);

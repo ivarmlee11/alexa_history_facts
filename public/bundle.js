@@ -128,12 +128,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var app = (0, _express2.default)();
 var PORT = process.env.PORT || 3000;
 
-app.use(_bodyParser2.default.json());
-
-app.post('/test', function (req, res) {
-  console.log('test route');
-  res.json('this works');
-});
+app.use(_bodyParser2.default.json({
+  verify: function getRawBody(req, res, buf) {
+    req.rawBody = buf.toString();
+  }
+}));
 
 app.post('/thisdayinhistory', requestVerifier, function (req, res) {
   if (req.body.request.type === 'LaunchRequest') {
@@ -193,16 +192,19 @@ app.post('/thisdayinhistory', requestVerifier, function (req, res) {
 });
 
 function requestVerifier(req, res, next) {
-  (0, _alexaVerifier2.default)(req.headers.signaturecertchainurl, req.headers.signature, req.body, function verificationCallback(err) {
-    console.log(err);
-    next();
+  (0, _alexaVerifier2.default)(req.headers.signaturecertchainurl, req.headers.signature, req.rawBody, function (err) {
+    if (err) {
+      throw new Error();
+    } else {
+      next();
+    }
   });
 }
 
 setInterval(function () {
   console.log('KEEPING HEROKU AWAKE');
   _http2.default.get('http://alexathisdayinhistory.herokuapp.com');
-}, 400000); // every 4 minutes
+}, 400000);
 
 app.listen(PORT, function () {
   console.log('listening on... ' + PORT);
